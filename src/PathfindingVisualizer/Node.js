@@ -1,10 +1,10 @@
 import React from "react";
 
-const Node = ({ text, x, y, start, end }) => {
+const Node = ({ text, x, y, start, end, discovered }) => {
   return (
     <div
       className="node"
-      style={{ backgroundColor: start ? "green" : end ? "red" : "white" }}
+      style={{ backgroundColor: start ? "green" : end ? "red" : discovered ? "lightblue" : "white" }}
     >
       {text}
     </div>

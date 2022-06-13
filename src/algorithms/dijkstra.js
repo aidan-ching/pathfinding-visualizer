@@ -17,12 +17,12 @@ class Grid {
   constructor(width, height) {
     this.width = width;
     this.height = height;
-    this.grid = new Array();
+    this.grid = [];
     this.start = ([-1,-1]);
     this.end = ([-1,-1]);
 
     for (let i = 0; i < width; ++i) {
-      let temp = new Array();
+      let temp = [];
       for (let j = 0; j < height; ++j) {
         let myNode = new Node(i, j);
         myNode.addNeighbours(this.generateNeighbours(myNode));
@@ -36,13 +36,13 @@ class Grid {
     let neighbours = [];
     //there are 8 cases. 4 corner cases and 4 edge cases.
     //first find out if its valid at all
-    if (node.x == 0) {
+    if (node.x === 0) {
       //left
-      if (node.y == 0) {
+      if (node.y === 0) {
         //top left corner
         neighbours.push([node.x + 1, node.y]);
         neighbours.push([node.x, node.y + 1]);
-      } else if (node.y == this.height - 1) {
+      } else if (node.y === this.height - 1) {
         //bottom left
         neighbours.push([node.x + 1, node.y]);
         neighbours.push([node.x, node.y - 1]);
@@ -51,13 +51,13 @@ class Grid {
         neighbours.push([node.x + 1, node.y]);
         neighbours.push([node.x, node.y + 1]);
       }
-    } else if (node.x == this.width - 1) {
+    } else if (node.x === this.width - 1) {
       //right
-      if (node.y == 0) {
+      if (node.y === 0) {
         //top right
         neighbours.push([node.x - 1, node.y]);
         neighbours.push([node.x, node.y + 1]);
-      } else if (node.y == this.height - 1) {
+      } else if (node.y === this.height - 1) {
         //bottom right
         neighbours.push([node.x - 1, node.y]);
         neighbours.push([node.x, node.y - 1]);
@@ -66,12 +66,12 @@ class Grid {
         neighbours.push([node.x - 1, node.y]);
         neighbours.push([node.x, node.y + 1]);
       }
-    } else if (node.y == 0) {
+    } else if (node.y === 0) {
       //top
       neighbours.push([node.x - 1, node.y]);
       neighbours.push([node.x, node.y + 1]);
       neighbours.push([node.x + 1, node.y]);
-    } else if (node.y == this.height - 1) {
+    } else if (node.y === this.height - 1) {
       neighbours.push([node.x - 1, node.y]);
       neighbours.push([node.x, node.y - 1]);
       neighbours.push([node.x + 1, node.y]);
@@ -95,17 +95,19 @@ class Grid {
 }
 
 function dijkstra(grid, start) {
+  let grid_copy = JSON.parse(JSON.stringify(grid));
+
   let q = [];
 
-  for (let i = 0; i < grid.length; ++i) {
-    for (let j = 0; j < grid[i].length; ++j) {
-      q.push(grid[i][j]);
+  for (let i = 0; i < grid_copy.length; ++i) {
+    for (let j = 0; j < grid_copy[i].length; ++j) {
+      q.push(grid_copy[i][j]);
     }
   }
 
-  grid[start[0]][start[1]].distance = 0;
+  grid_copy[start[0]][start[1]].distance = 0;
 
-  while (q.length != 0) {
+  while (q.length !== 0) {
     //while q is not empty
     //find q with minimum length
 
@@ -127,31 +129,35 @@ function dijkstra(grid, start) {
 
 
     for (let i = 0; i < u.neighbours.length; ++i) {
-      let tempNode = grid[u.neighbours[i][0]][u.neighbours[i][1]];
+      let tempNode = grid_copy[u.neighbours[i][0]][u.neighbours[i][1]];
 
       if (q.includes(tempNode)) {
         let alt = u.distance + 1;
-        if (alt < grid[u.neighbours[i][0]][u.neighbours[i][1]].distance) {
-          grid[u.neighbours[i][0]][u.neighbours[i][1]].distance = alt;
-          grid[u.neighbours[i][0]][u.neighbours[i][1]].prev = u;
+        if (alt < grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].distance) {
+          grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].distance = alt;
+          grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].prev = u;
         }
       }
     }
   }
+
+  return grid_copy;
 }
 
 function dijkstra_endgoal(grid, start, end) {
+  let grid_copy = JSON.parse(JSON.stringify(grid));
+
   let q = [];
 
-  for (let i = 0; i < grid.length; ++i) {
-    for (let j = 0; j < grid[i].length; ++j) {
-      q.push(grid[i][j]);
+  for (let i = 0; i < grid_copy.length; ++i) {
+    for (let j = 0; j < grid_copy[i].length; ++j) {
+      q.push(grid_copy[i][j]);
     }
   }
 
-  grid[start[0]][start[1]].distance = 0;
+  grid_copy[start[0]][start[1]].distance = 0;
 
-  while (q.length != 0) {
+  while (q.length !== 0) {
     //while q is not empty
     //find q with minimum length
 
@@ -174,24 +180,24 @@ function dijkstra_endgoal(grid, start, end) {
 
 
     for (let i = 0; i < u.neighbours.length; ++i) {
-      let tempNode = grid[u.neighbours[i][0]][u.neighbours[i][1]];
+      let tempNode = grid_copy[u.neighbours[i][0]][u.neighbours[i][1]];
 
       if (q.includes(tempNode)) {
         let alt = u.distance + 1;
-        if (alt < grid[u.neighbours[i][0]][u.neighbours[i][1]].distance) {
-          grid[u.neighbours[i][0]][u.neighbours[i][1]].distance = alt;
-          grid[u.neighbours[i][0]][u.neighbours[i][1]].prev = u;
+        if (alt < grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].distance) {
+          grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].distance = alt;
+          grid_copy[u.neighbours[i][0]][u.neighbours[i][1]].prev = u;
         }
       }
     }
 
-    if (u.x == end[0] && u.y == end[1]){
+    if (u.x === end[0] && u.y === end[1]){
       let path = [];
       path.push(u);
 
       console.log(u.distance);
 
-      while (u.prev != undefined){
+      while (u.prev !== undefined){
         path.push(u.prev);
         u = u.prev;
       }
@@ -201,12 +207,14 @@ function dijkstra_endgoal(grid, start, end) {
     }
 
   }
+
+  return grid_copy;
 }
 
 /*
-let myGrid = new Grid(80,20);
+let mygrid_copy = new grid_copy(80,20);
 
-dijkstra_endgoal(myGrid.grid, [5,10], [70,10]);
+dijkstra_endgoal(mygrid_copy.grid_copy, [5,10], [70,10]);
 
 */
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Node from "./Node";
 
-const Grid = ({ start, finish, rows, cols }) => {
+const Grid = ({ start, finish, rows, cols, grid }) => {
   const generateGrid = () => {
     let myGrid = [];
     let count = 1;
@@ -15,6 +15,8 @@ const Grid = ({ start, finish, rows, cols }) => {
             y={col}
             start={row === start[0] && col === start[1] ? true : false}
             end={row === finish[0] && col === finish[1] ? true : false}
+            discovered={grid[row][col].explored}
+          
           />
         );
         ++count;
