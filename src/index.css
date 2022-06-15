@@ -1,14 +1,15 @@
 .node{
   width:20px;
   height: 20px;
-  outline: solid 1px black;
+  outline: solid 1px darkgrey;
 }
 
 .grid{
   display:flex;
   flex-wrap: wrap;
   width: 1600px;
-  height: 400px;
+  height: 600px;
+  outline: 2px solid black;
 }
 
 .btn{
@@ -32,7 +33,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  border: 1px solid black;
 }
 
 .btn-container{
@@ -41,3 +41,13 @@
   justify-content: space-evenly;
 }
 
+.grid_setup{
+  display:flex;
+  align-items: center;
+}
+
+.radio_buttons{
+  display:flex;
+  flex-direction: column;
+  margin: 20px;
+}

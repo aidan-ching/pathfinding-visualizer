@@ -4,8 +4,10 @@ class Node {
     this.y = y;
     this.neighbours = neighbours;
     this.explored = false;
+    this.path = false;
     this.distance = Infinity;
     this.prev = undefined;
+    this.wall = false;
   }
 
   addNeighbours(n) {
@@ -151,6 +153,7 @@ function dijkstra_endgoal(grid, start, end) {
 
   for (let i = 0; i < grid_copy.length; ++i) {
     for (let j = 0; j < grid_copy[i].length; ++j) {
+      grid_copy[i][j].distance = Infinity;
       q.push(grid_copy[i][j]);
     }
   }
@@ -166,7 +169,7 @@ function dijkstra_endgoal(grid, start, end) {
     let remove_index = 0;
 
     for (let i = 0; i < q.length; ++i) {
-      if (q[i].distance < min_val) {
+      if (q[i].distance < min_val && !q[i].wall) {
         u = q[i];
         min_val = q[i].distance;
         remove_index = i
@@ -194,8 +197,6 @@ function dijkstra_endgoal(grid, start, end) {
     if (u.x === end[0] && u.y === end[1]){
       let path = [];
       path.push(u);
-
-      console.log(u.distance);
 
       while (u.prev !== undefined){
         path.push(u.prev);
