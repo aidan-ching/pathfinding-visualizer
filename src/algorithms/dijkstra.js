@@ -148,8 +148,10 @@ function dijkstra(grid, start) {
 
 function dijkstra_endgoal(grid, start, end) {
   let grid_copy = JSON.parse(JSON.stringify(grid));
+  let result = [];
 
   let q = [];
+  let exploredInOrder = [];
 
   for (let i = 0; i < grid_copy.length; ++i) {
     for (let j = 0; j < grid_copy[i].length; ++j) {
@@ -181,6 +183,7 @@ function dijkstra_endgoal(grid, start, end) {
     q.splice(remove_index, 1);
     u.explored = true;
 
+    exploredInOrder.push(u);
 
     for (let i = 0; i < u.neighbours.length; ++i) {
       let tempNode = grid_copy[u.neighbours[i][0]][u.neighbours[i][1]];
@@ -203,13 +206,16 @@ function dijkstra_endgoal(grid, start, end) {
         u = u.prev;
       }
       path = path.reverse();
+      result.push(path);
 
       break;
     }
 
   }
 
-  return grid_copy;
+  result.push(exploredInOrder);
+
+  return result;
 }
 
 /*

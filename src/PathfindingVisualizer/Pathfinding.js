@@ -4,24 +4,57 @@ import Button from "./Button";
 import RadioButtons from "./RadioButtons";
 import { useState } from "react";
 import * as algo from "../algorithms/dijkstra";
+import * as maze_gen from "../algorithms/maze_gen"
+
 
 const Pathfinding = () => {
-  const [rows, setRows] = useState(80);
-  const [cols, setCols] = useState(30);
+  const [rows, setRows] = useState(70);
+  const [cols, setCols] = useState(47);
   const [grid, setGrid] = useState(new algo.Grid(rows, cols).grid);
   const [start, setStart] = useState([-1, -1]); // x, y
   const [finish, setFinish] = useState([-1, -1]);
   const [itemToPlace, setItemToPlace] = useState(undefined);
+  const [mouseDown, setMouseDown] = useState(false);
+
+  const animationTime = 3;
 
   const run = () => {
-    let newGrid = algo.dijkstra_endgoal(grid, start, finish);
-    let tempNode = newGrid[finish[0]][finish[1]];
-    while (tempNode.prev !== undefined) {
-      tempNode = tempNode.prev;
-      newGrid[tempNode.x][tempNode.y].path = true;
-    }
+    //no start or end chosen
+    if (start === [-1, -1] || finish === [-1, -1]) {
+      console.log("Error: No start or/and end chosen");
+    } else {
 
-    setGrid(newGrid);
+      let tempStart = start;
+      let tempFinish = finish;
+
+      reset();
+
+      setStart(tempStart);
+      setFinish(tempFinish);
+
+      
+      let result = algo.dijkstra_endgoal(clearDiscovered(grid), tempStart, tempFinish);
+
+      
+
+      //animate the discovered path first
+      for (let i = 0; i < result[1].length; ++i) {
+        setTimeout(() => {
+          let newGrid = grid.slice();
+          newGrid[result[1][i].x][result[1][i].y].explored = true;
+          setGrid(newGrid);
+        }, animationTime * i + animationTime);
+      }
+
+      //now animate the actual path found
+      for (let i = 0; i < result[0].length; ++i) {
+        setTimeout(() => {
+          let newGrid = grid.slice();
+          newGrid[result[0][i].x][result[0][i].y].path = true;
+          setGrid(newGrid);
+        }, (animationTime * i * 10) + animationTime * result[1].length);
+      }
+    }
   };
 
   const reset = () => {
@@ -35,11 +68,11 @@ const Pathfinding = () => {
   };
 
   const clearDiscovered = () => {
-    let newGrid = new algo.Grid(rows,cols).grid;
+    let newGrid = new algo.Grid(rows, cols).grid;
 
-    for (let i = 0; i < newGrid.length; ++i){
-      for (let j = 0; j < newGrid[i].length; ++j){
-        if (grid[i][j].wall){
+    for (let i = 0; i < newGrid.length; ++i) {
+      for (let j = 0; j < newGrid[i].length; ++j) {
+        if (grid[i][j].wall) {
           newGrid[i][j].wall = true;
         }
       }
@@ -56,12 +89,24 @@ const Pathfinding = () => {
       setGrid(clearDiscovered(grid));
       setFinish([x, y]);
     } else if (itemToPlace === "wall") {
-      let newGrid = JSON.parse(JSON.stringify(grid));
+      let newGrid = clearDiscovered(grid);
       newGrid[x][y].wall = true;
       setGrid(newGrid);
     }
+  };
 
-    console.log(grid[x][y]);
+  const handleMouseDown = (x, y) => {
+    setMouseDown(true);
+    changeGrid(x, y);
+  };
+
+  const handleMouseEnter = (x, y) => {
+    if (!mouseDown) return;
+    changeGrid(x, y);
+  };
+
+  const handleMouseUp = () => {
+    setMouseDown(false);
   };
 
   return (
@@ -73,14 +118,20 @@ const Pathfinding = () => {
           rows={rows}
           cols={cols}
           grid={grid}
-          changeGrid={changeGrid}
+          handleMouseDown={handleMouseDown}
+          handleMouseEnter={handleMouseEnter}
+          handleMouseUp={handleMouseUp}
         />
-        <RadioButtons onChange={changeItemToPlace} />
       </div>
 
       <div className="btn-container">
+        <RadioButtons onChange={changeItemToPlace} />
         <Button text="Run" onClick={run} />
         <Button text="Reset" onClick={reset} />
+        <Button text="Generate" onClick={() => {
+
+          console.log(maze_gen.fill_walls(grid));
+        }} />
       </div>
     </div>
   );

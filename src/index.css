@@ -1,16 +1,18 @@
 .node{
-  width:20px;
-  height: 20px;
+  width: 1vw;
+  height: 1vw;
   outline: solid 1px darkgrey;
 }
 
 .grid{
   display:flex;
   flex-wrap: wrap;
-  width: 1600px;
-  height: 600px;
+  width: 70vw;
+  height: 90vh;
   outline: 2px solid black;
 }
+
+
 
 .btn{
   display:flex;
@@ -23,28 +25,33 @@
   width: 7vh;
 }
 
+.grid_setup{
+  display:flex;
+  align-items:flex-end;
+  margin:0;
+}
+
 .wrapper, html, body{
+  width: 100wh;
   height: 100vh;
   margin:0;
 }
 
 .wrapper{
   display:flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
 }
 
 .btn-container{
   display:flex;
-  width: 20vh;
+  flex-direction: column;
+  width: 10vw;
   justify-content: space-evenly;
 }
 
-.grid_setup{
-  display:flex;
-  align-items: center;
-}
+
 
 .radio_buttons{
   display:flex;
