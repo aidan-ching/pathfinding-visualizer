@@ -9,6 +9,7 @@ const Node = ({
   discovered,
   path,
   wall,
+  gray,
   handleMouseDown,
   handleMouseEnter,
   handleMouseUp,
@@ -27,7 +28,9 @@ const Node = ({
           ? "#6495ED"
           : discovered
           ? "lightblue"
-          : "white",
+          : gray
+          ? "whitesmoke"
+          : "white"
       }}
       onMouseDown={() => {
         handleMouseDown(x, y);

@@ -29,6 +29,7 @@ const Grid = ({
             discovered={grid[row][col].explored}
             path={grid[row][col].path}
             wall={grid[row][col].wall}
+            gray={(row+col)%2 === 0 ? true: false}
             handleMouseDown={handleMouseDown}
             handleMouseEnter={handleMouseEnter}
             handleMouseUp={handleMouseUp}

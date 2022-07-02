@@ -1,14 +1,13 @@
 import React from "react";
 import Grid from "./Grid";
-import Button from "./Button";
-import RadioButtons from "./RadioButtons";
+import ItemSelector from "./ItemSelector";
+import ControlPanel from "./ControlPanel";
 import { useState } from "react";
 import * as algo from "../algorithms/dijkstra";
 import * as maze_gen from "../algorithms/maze_gen"
 
-
 const Pathfinding = () => {
-  const [rows, setRows] = useState(70);
+  const [rows, setRows] = useState(71);
   const [cols, setCols] = useState(47);
   const [grid, setGrid] = useState(new algo.Grid(rows, cols).grid);
   const [start, setStart] = useState([-1, -1]); // x, y
@@ -16,7 +15,11 @@ const Pathfinding = () => {
   const [itemToPlace, setItemToPlace] = useState(undefined);
   const [mouseDown, setMouseDown] = useState(false);
 
-  const animationTime = 3;
+  const animationTime = 5;
+
+  const generate = () =>{
+    setGrid(maze_gen.recursive_backtracking(new algo.Grid(rows,cols).grid));
+  };
 
   const run = () => {
     //no start or end chosen
@@ -52,7 +55,7 @@ const Pathfinding = () => {
           let newGrid = grid.slice();
           newGrid[result[0][i].x][result[0][i].y].path = true;
           setGrid(newGrid);
-        }, (animationTime * i * 10) + animationTime * result[1].length);
+        }, (animationTime * i * 2) + animationTime * result[1].length);
       }
     }
   };
@@ -64,7 +67,7 @@ const Pathfinding = () => {
   };
 
   const changeItemToPlace = (e) => {
-    setItemToPlace(e.target.id);
+    setItemToPlace(e.target.innerText);
   };
 
   const clearDiscovered = () => {
@@ -82,13 +85,13 @@ const Pathfinding = () => {
   };
 
   const changeGrid = (x, y) => {
-    if (itemToPlace === "start") {
+    if (itemToPlace === "BEGIN") {
       setGrid(clearDiscovered(grid));
       setStart([x, y]);
-    } else if (itemToPlace === "stop") {
+    } else if (itemToPlace === "END") {
       setGrid(clearDiscovered(grid));
       setFinish([x, y]);
-    } else if (itemToPlace === "wall") {
+    } else if (itemToPlace === "WALL") {
       let newGrid = clearDiscovered(grid);
       newGrid[x][y].wall = true;
       setGrid(newGrid);
@@ -125,13 +128,10 @@ const Pathfinding = () => {
       </div>
 
       <div className="btn-container">
-        <RadioButtons onChange={changeItemToPlace} />
-        <Button text="Run" onClick={run} />
-        <Button text="Reset" onClick={reset} />
-        <Button text="Generate" onClick={() => {
+        <ControlPanel run={run} reset={reset} generate={generate}/>
+          
+        <ItemSelector changeItemToPlace={changeItemToPlace} itemToPlace={itemToPlace}/>
 
-          console.log(maze_gen.fill_walls(grid));
-        }} />
       </div>
     </div>
   );
