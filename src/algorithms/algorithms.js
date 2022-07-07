@@ -215,14 +215,108 @@ function dijkstra_endgoal(grid, start, end) {
 
   result.push(exploredInOrder);
 
+  //result[0] is that path to the end goal
+  //result[1] are the explorered nodes in order, so that it can be easily animated by react. 
+
   return result;
 }
 
-/*
-let mygrid_copy = new grid_copy(80,20);
 
-dijkstra_endgoal(mygrid_copy.grid_copy, [5,10], [70,10]);
+function bfs(grid,start,end){
+    //result[0] is that path to the end goal
+  //result[1] are the explored nodes in order, so that it can be easily animated by react. 
+  //start and end are both arrays with length of 1, x and y coords.
+    let result = [];
+    let exploredInOrder = [];
+    let q = []; //create queue 
+    grid[start[0]][start[1]].explored = true;
+    q.push(grid[start[0]][start[1]]) //enqueue the starting node
+    console.log(start);
+    exploredInOrder.push(q[0]);
 
-*/
 
-export { Node, Grid, dijkstra, dijkstra_endgoal }
+    while(q.length !== 0){ //while queue is not empty
+      let v = q[0]; // dequeue
+      q.splice(0,1); //remove the dequeued element
+      if (v.x === end[0] && v.y === end[1]){
+        let path = [];
+        path.push(v);
+
+        while (v.prev !== undefined){
+          path.push(v.prev);
+          v = v.prev;
+        }
+        path = path.reverse();
+        result.push(path);
+        
+        break; //found the result
+      }
+
+      console.log(v);
+
+      for (let i = 0; i < v.neighbours.length; ++i){ //for all neighbours of v
+        if(!grid[v.neighbours[i][0]][v.neighbours[i][1]].explored && !grid[v.neighbours[i][0]][v.neighbours[i][1]].wall){
+          let curr = grid[v.neighbours[i][0]][v.neighbours[i][1]];
+          curr.explored = true;
+          curr.prev = v;
+          exploredInOrder.push(curr);
+          q.push(curr);
+        }
+      }
+    }
+
+    result.push(exploredInOrder);
+    return result;
+}
+
+
+function dfs(grid,start,end){
+  //result[0] is that path to the end goal
+//result[1] are the explored nodes in order, so that it can be easily animated by react. 
+//start and end are both arrays with length of 1, x and y coords.
+  let result = [];
+  let exploredInOrder = [];
+  let q = []; //create stack 
+  grid[start[0]][start[1]].explored = true;
+  q.push(grid[start[0]][start[1]]) //enqueue the starting node
+  console.log(start);
+  exploredInOrder.push(q[0]);
+
+
+  while(q.length !== 0){ //while queue is not empty
+    let v = q[0]; // dequeue
+    q.splice(0,1); //remove the dequeued element
+    if (v.x === end[0] && v.y === end[1]){
+      let path = [];
+      path.push(v);
+
+      while (v.prev !== undefined){
+        path.push(v.prev);
+        v = v.prev;
+      }
+      path = path.reverse();
+      result.push(path);
+      
+      break; //found the result
+    }
+
+    console.log(v);
+
+    for (let i = 0; i < v.neighbours.length; ++i){ //for all neighbours of v
+      if(!grid[v.neighbours[i][0]][v.neighbours[i][1]].explored && !grid[v.neighbours[i][0]][v.neighbours[i][1]].wall){
+        let curr = grid[v.neighbours[i][0]][v.neighbours[i][1]];
+        curr.explored = true;
+        curr.prev = v;
+        exploredInOrder.push(curr);
+        q.unshift(curr);
+      }
+    }
+  }
+
+  result.push(exploredInOrder);
+  return result;
+}
+
+
+
+export { Node, Grid, dijkstra, dijkstra_endgoal, bfs, dfs }

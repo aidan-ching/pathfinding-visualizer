@@ -45,4 +45,6 @@ const Grid = ({
   return <div className="grid">{generateGrid()}</div>;
 };
 
+
+//use generateGrid to create our array of Nodes, then just return that array of Nodes within a large grid. This makes our grid asset. 
 export default Grid;

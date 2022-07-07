@@ -2,20 +2,24 @@ import React from "react";
 import Grid from "./Grid";
 import ItemSelector from "./ItemSelector";
 import ControlPanel from "./ControlPanel";
+import ChangeAlgoButton from "./ChangeAlgoButton";
+import ChangeAlgoMenu from "./ChangeAlgoMenu";
 import { useState } from "react";
-import * as algo from "../algorithms/dijkstra";
+import * as algo from "../algorithms/algorithms.js";
 import * as maze_gen from "../algorithms/maze_gen"
 
 const Pathfinding = () => {
-  const [rows, setRows] = useState(71);
-  const [cols, setCols] = useState(47);
+  const rows = 71;
+  const cols = 47;
+
   const [grid, setGrid] = useState(new algo.Grid(rows, cols).grid);
   const [start, setStart] = useState([-1, -1]); // x, y
   const [finish, setFinish] = useState([-1, -1]);
   const [itemToPlace, setItemToPlace] = useState(undefined);
   const [mouseDown, setMouseDown] = useState(false);
-
-  const animationTime = 5;
+  const [animationTime, setAnimationTime] = useState(10);
+  const [toggleChangeAlgo, setToggleChangeAlgo] = useState(false);
+  const [currentAlgo, setCurrentAlgo] = useState("Dijkstra's")
 
   const generate = () =>{
     setGrid(maze_gen.recursive_backtracking(new algo.Grid(rows,cols).grid));
@@ -35,10 +39,19 @@ const Pathfinding = () => {
       setStart(tempStart);
       setFinish(tempFinish);
 
-      
-      let result = algo.dijkstra_endgoal(clearDiscovered(grid), tempStart, tempFinish);
+      let result = undefined;
 
-      
+      if (currentAlgo === "Dijkstra's"){
+        result = algo.dijkstra_endgoal(clearDiscovered(grid), tempStart, tempFinish);
+      }
+
+      if (currentAlgo === "BFS"){
+        result = algo.bfs(clearDiscovered(grid), tempStart, tempFinish);
+      }
+
+      if (currentAlgo === "DFS"){
+        result = algo.dfs(clearDiscovered(grid), tempStart, tempFinish);
+      }
 
       //animate the discovered path first
       for (let i = 0; i < result[1].length; ++i) {
@@ -46,7 +59,7 @@ const Pathfinding = () => {
           let newGrid = grid.slice();
           newGrid[result[1][i].x][result[1][i].y].explored = true;
           setGrid(newGrid);
-        }, animationTime * i + animationTime);
+        }, animationTime * i);
       }
 
       //now animate the actual path found
@@ -55,7 +68,7 @@ const Pathfinding = () => {
           let newGrid = grid.slice();
           newGrid[result[0][i].x][result[0][i].y].path = true;
           setGrid(newGrid);
-        }, (animationTime * i * 2) + animationTime * result[1].length);
+        }, (animationTime * i) + animationTime * result[1].length);
       }
     }
   };
@@ -95,6 +108,11 @@ const Pathfinding = () => {
       let newGrid = clearDiscovered(grid);
       newGrid[x][y].wall = true;
       setGrid(newGrid);
+    } else if (itemToPlace === "REMOVE"){
+      let newGrid = grid;
+      newGrid[x][y].wall = false;
+      newGrid[x][y].explored = false;
+      setGrid(newGrid);
     }
   };
 
@@ -112,6 +130,15 @@ const Pathfinding = () => {
     setMouseDown(false);
   };
 
+  const handleToggleChangeAlgo = () =>{
+    setToggleChangeAlgo(!toggleChangeAlgo);
+  }
+
+  const handleSetCurrentAlgo = (e) => {
+    setCurrentAlgo(e.target.innerText);
+    setToggleChangeAlgo(false);
+  }
+
   return (
     <div className="wrapper">
       <div className="grid_setup">
@@ -128,10 +155,22 @@ const Pathfinding = () => {
       </div>
 
       <div className="btn-container">
-        <ControlPanel run={run} reset={reset} generate={generate}/>
-          
-        <ItemSelector changeItemToPlace={changeItemToPlace} itemToPlace={itemToPlace}/>
+        <div className="changeAlgo">
+          {toggleChangeAlgo ? <ChangeAlgoMenu text={currentAlgo} run={handleToggleChangeAlgo} change={handleSetCurrentAlgo}/> : <ChangeAlgoButton text={currentAlgo} run={handleToggleChangeAlgo}/>}
+        </div>
+        
+        
+        
+        <div className="ControlPanel">
+          <ControlPanel run={run} reset={reset} generate={generate}/>
+          <ItemSelector changeItemToPlace={changeItemToPlace} itemToPlace={itemToPlace}/>
+        </div>
 
+
+        <div class="slidecontainer">
+          <div>Animation Delay: {animationTime}ms</div>
+          <input type="range" min="1" max="50" value={animationTime} className="slider" id="myRange" onChange={(e) => {setAnimationTime(e.target.value)}}/>
+        </div>
       </div>
     </div>
   );
